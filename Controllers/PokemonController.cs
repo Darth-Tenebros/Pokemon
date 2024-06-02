@@ -29,5 +29,18 @@ namespace PokemonReviewApp.Controllers
 
             return Ok(pokemons);
         }
+
+        [HttpGet("{pokeId}")]
+        [ProducesResponseType(200, Type = typeof(Pokemon))]
+        [ProducesResponseType(400)]
+        public IActionResult GetPokemon(int id)
+        {
+            if(!_pokemonRepository.PokemonExists(id)) return NotFound(id);
+
+            var pokemon = _pokemonRepository.GetPokemon(id);
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            return Ok(pokemon);
+        }
     }
 }
