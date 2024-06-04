@@ -26,16 +26,14 @@ namespace PokemonReviewApp.Repository
             return _context.Pokemon.Where(p => p.Name.Equals(name)).FirstOrDefault();
         }
 
-        public decimal GetPokemonRating(int pokemonId)
+        public decimal GetPokemonRating(int pokeId)
         {
-           var review = _context.Reviews.Where(p => p.Id == pokemonId);
-           
-           if(review.Count() <= 0)
-           {
-                return 0;
-           }
+            var review = _context.Reviews.Where(p => p.Pokemon.Id == pokeId);
 
-           return (decimal)review.Sum(rating => rating.Rating) / review.Count();
+            if (review.Count() <= 0)
+                return 0;
+
+            return ((decimal)review.Sum(r => r.Rating) / review.Count());
         }
 
         public ICollection<Pokemon> GetPokemons()
