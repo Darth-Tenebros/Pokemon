@@ -30,7 +30,7 @@ namespace PokemonReviewApp.Controllers
             return Ok(pokemons);
         }
 
-        [HttpGet("{pokeId}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(Pokemon))]
         [ProducesResponseType(400)]
         public IActionResult GetPokemon(int id)
@@ -41,6 +41,21 @@ namespace PokemonReviewApp.Controllers
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(pokemon);
+        }
+
+        [HttpGet("{id}/rating")]
+        [ProducesResponseType(200, Type = typeof(decimal))]
+        [ProducesResponseType(400)]
+        public IActionResult GetPokemonRating(int id)
+        {
+            if(!_pokemonRepository.PokemonExists(id))
+                return NotFound(id);
+            
+            var rating = _pokemonRepository.GetPokemonRating(id);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            return Ok(rating);
         }
     }
 }
