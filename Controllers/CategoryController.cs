@@ -35,7 +35,7 @@ namespace PokemonReviewApp.Controllers
         }
 
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
         public IActionResult GetCategory(int id)
