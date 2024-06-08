@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
@@ -63,6 +64,37 @@ namespace PokemonReviewApp.Controllers
                 return BadRequest(ModelState);
             
             return Ok(rating);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreatePokemon([FromBody] PokemonDto incomingPokemon)
+        {
+            if(incomingPokemon == null)
+                return BadRequest(ModelState);
+            
+            var exists = _pokemonRepository.GetPokemons()
+                                .Where(p => p.Name.Trim().ToUpper().Equals(incomingPokemon.Name.Trim().ToUpper()))
+                                .FirstOrDefault();
+            
+            if(exists != null)
+            {
+                ModelState.AddModelError("", "Pokemon already exists!");
+                return StatusCode(422, ModelState);
+            }
+
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var pokemon = _mapper.Map<Pokemon>(incomingPokemon);
+            if(!_pokemonRepository.CreatePokemon(pokemon))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Pokemon created successfully!");
         }
     }
 }
