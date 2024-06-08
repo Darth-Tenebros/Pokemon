@@ -16,6 +16,12 @@ namespace PokemonReviewApp.Repository
             _context = context;
         }
 
+        public bool CreatePokemon(Pokemon pokemon)
+        {
+            _context.Add(pokemon);
+            return Save();
+        }
+
         public Pokemon GetPokemon(int id)
         {
             return _context.Pokemon.Where(p => p.Id == id).FirstOrDefault();
@@ -44,6 +50,15 @@ namespace PokemonReviewApp.Repository
         public bool PokemonExists(int pokemonId)
         {
             return _context.Pokemon.Any(p => p.Id == pokemonId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            if(saved > 0)
+                return true;
+            
+            return false;
         }
     }
 }
